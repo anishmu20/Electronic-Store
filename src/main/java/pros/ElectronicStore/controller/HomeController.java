@@ -1,4 +1,4 @@
-package pros.ElectronicStore.Controller;
+package pros.ElectronicStore.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
