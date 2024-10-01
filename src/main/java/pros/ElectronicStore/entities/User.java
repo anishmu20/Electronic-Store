@@ -29,6 +29,7 @@ public class User {
     @Column(length = 1000)
     private String about;
 
+    @Setter
     @Column(name = "user_image")
     private String imageName;
 

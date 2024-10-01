@@ -20,7 +20,7 @@ public interface UserService {
 
     // getall
 
-    List<UserDto> getAll();
+    List<UserDto> getAllUser();
 
     // get single user
 
