@@ -62,9 +62,4 @@ public class UserController {
     public ResponseEntity<List<UserDto>> Search(@PathVariable("keyword") String keyword){
         return  new ResponseEntity<>(userService.searchUser(keyword),HttpStatus.OK);
     }
-
-
-
-
-
 }
