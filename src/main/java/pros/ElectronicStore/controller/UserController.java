@@ -16,19 +16,54 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-    // Create
+    /**
+     * Creates a new user in the system.
+     *
+     * <p>This method handles POST requests to create a new user by accepting a UserDto
+     * object in the request body. It invokes the UserService to process and save the
+     * user information, and then returns the created UserDto along with a status of
+     * 201 (Created).</p>
+     *
+     * @param userDto the DTO object containing user information for creation
+     * @return a ResponseEntity containing the created UserDto and HTTP status 201 (Created)
+     */
+
     @PostMapping
     public ResponseEntity<UserDto> create(@RequestBody UserDto userDto){
         UserDto userDto1 = userService.createUser(userDto);
         return new ResponseEntity<>(userDto1, HttpStatus.CREATED);
     }
-    // Update
+
+    /**
+     * Updates an existing user in the system.
+     *
+     * <p>This method handles PUT requests to update an existing user's details. It
+     * accepts a user ID as a path variable and a UserDto object in the request body.
+     * It invokes the UserService to update the user information and then returns the
+     * updated UserDto along with a status of 200 (OK).</p>
+     *
+     * @param user_id the ID of the user to be updated
+     * @param userDto the DTO object containing updated user information
+     * @return a ResponseEntity containing the updated UserDto and HTTP status 200 (OK)
+     */
     @PutMapping("/{user_id}")
     public  ResponseEntity<UserDto> update(@PathVariable("user_id") String user_id,@RequestBody UserDto userDto){
         UserDto updatedUser = userService.updateUser(userDto, user_id);
         return new ResponseEntity<>(updatedUser,HttpStatus.OK);
     }
-    // Delete
+    /**
+     * Deletes an existing user from the system.
+     *
+     * <p>This method handles DELETE requests to remove a user identified by the user ID
+     * provided as a path variable. It invokes the UserService to delete the user
+     * and then returns a custom ApiResponseMessage indicating the success of the operation,
+     * along with a status of 200 (OK).</p>
+     *
+     * @param user_id the ID of the user to be deleted
+     * @return a ResponseEntity containing an ApiResponseMessage with success status and HTTP status 200 (OK)
+     */
+
+
     @DeleteMapping("/{user_id}")
     public ResponseEntity<ApiResponseMessage> delete(@PathVariable ("user_id") String user_id){
         userService.deleteUser(user_id);
@@ -37,26 +72,62 @@ public class UserController {
                 .status(HttpStatus.OK).build();
         return new ResponseEntity<>(message,HttpStatus.OK);
     }
+    /**
+     * Retrieves all users from the system.
+     *
+     * <p>This method handles GET requests to fetch a list of all users in the system.
+     * It invokes the UserService to retrieve all users and returns a list of UserDto
+     * objects, along with a status of 200 (OK).</p>
+     *
+     * @return a ResponseEntity containing a list of UserDto objects and HTTP status 200 (OK)
+     */
 
-
-    // GetAll
     @GetMapping()
     public ResponseEntity<List<UserDto>> getAllUsers(){
         return new ResponseEntity<>(userService.getAllUser(),HttpStatus.OK);
     }
-    // GetByUser
+    /**
+     * Retrieves a user by their ID.
+     *
+     * <p>This method handles GET requests to fetch a user's details based on their
+     * user ID, provided as a path variable. It invokes the UserService to retrieve
+     * the user and returns the UserDto object along with a status of 200 (OK).</p>
+     *
+     * @param user_id the ID of the user to be retrieved
+     * @return a ResponseEntity containing the UserDto object and HTTP status 200 (OK)
+     */
+
     @GetMapping("/{user_id}")
     public  ResponseEntity<UserDto> getUser(@PathVariable ("user_id") String user_id ){
         return  new ResponseEntity<>(userService.getUserById(user_id),HttpStatus.OK);
     }
+    /**
+     * Retrieves a user by their email.
+     *
+     * <p>This method handles GET requests to fetch a user's details based on their
+     * email address, provided as a path variable. It invokes the UserService to
+     * retrieve the user and returns the UserDto object along with a status of 200 (OK).</p>
+     *
+     * @param user_email the email of the user to be retrieved
+     * @return a ResponseEntity containing the UserDto object and HTTP status 200 (OK)
+     */
 
-    //GetByEmail
     @GetMapping("/email/{user_email}")
     public  ResponseEntity<UserDto> getUserByEmail(@PathVariable("user_email") String user_email){
         return new ResponseEntity<>(userService.getUserByEmail(user_email),HttpStatus.OK);
     }
 
-    // Search
+    /**
+     * Searches for users by a keyword.
+     *
+     * <p>This method handles GET requests to search for users based on a keyword
+     * provided as a path variable. It invokes the UserService to search for users
+     * matching the keyword in their details and returns a list of UserDto objects
+     * along with a status of 200 (OK).</p>
+     *
+     * @param keyword the search keyword to filter users
+     * @return a ResponseEntity containing a list of UserDto objects and HTTP status 200 (OK)
+     */
 
     @GetMapping("/search/{keyword}")
     public ResponseEntity<List<UserDto>> Search(@PathVariable("keyword") String keyword){

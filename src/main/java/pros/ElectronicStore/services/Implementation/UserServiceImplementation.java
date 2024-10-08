@@ -22,6 +22,18 @@ public class UserServiceImplementation implements UserService {
     @Autowired
     private ModelMapper mapper;
 
+    /**
+     * Creates a new user in the system.
+     *
+     * <p>This method generates a unique user ID, converts the UserDto to a User entity,
+     * and saves it to the database. It then converts the saved User entity back to
+     * a UserDto and returns it.</p>
+     *
+     * @param userDto the DTO object containing user information for creation
+     * @return the created UserDto object with generated user ID and persisted data
+     */
+
+
     @Override
     public UserDto createUser(UserDto userDto) {
      // generate id
@@ -37,6 +49,18 @@ public class UserServiceImplementation implements UserService {
         return responseUserDto;
     }
 
+    /**
+     * Updates an existing user by user ID.
+     *
+     * <p>This method fetches an existing User entity by its ID, updates its fields
+     * based on the provided UserDto (excluding email), saves the updated entity
+     * back to the database, and returns the updated UserDto.</p>
+     *
+     * @param userDto the DTO object containing updated user information
+     * @param user_id the ID of the user to be updated
+     * @return the updated UserDto object with the new details
+     * @throws RuntimeException if the user with the given ID is not found
+     */
 
     @Override
     public UserDto updateUser(UserDto userDto, String user_id) {
@@ -53,6 +77,15 @@ public class UserServiceImplementation implements UserService {
         return entityToDto(updatedUser);
         
     }
+    /**
+     * Deletes a user by user ID.
+     *
+     * <p>This method fetches an existing User entity by its ID and deletes it
+     * from the database.</p>
+     *
+     * @param user_id the ID of the user to be deleted
+     * @throws RuntimeException if the user with the given ID is not found
+     */
 
     @Override
     public void deleteUser(String user_id) {
@@ -60,6 +93,14 @@ public class UserServiceImplementation implements UserService {
         userRepository.delete(user);
 
     }
+    /**
+     * Retrieves all users from the system.
+     *
+     * <p>This method fetches all User entities from the database, converts them
+     * to UserDto objects, and returns a list of these DTOs.</p>
+     *
+     * @return a list of all UserDto objects representing users in the system
+     */
 
     @Override
     public List<UserDto> getAllUser() {
@@ -67,12 +108,34 @@ public class UserServiceImplementation implements UserService {
         return userlist.stream().map(this::entityToDto).toList();
 
     }
+    /**
+     * Retrieves a user by user ID.
+     *
+     * <p>This method fetches a User entity by its ID, converts it to a UserDto,
+     * and returns the DTO.</p>
+     *
+     * @param user_id the ID of the user to be retrieved
+     * @return the UserDto object representing the user with the given ID
+     * @throws RuntimeException if the user with the given ID is not found
+     */
+
 
     @Override
     public UserDto getUserById(String user_id) {
         User user = userRepository.findById(user_id).orElseThrow(() -> new RuntimeException("user with given id not found"));
         return entityToDto(user);
     }
+    /**
+     * Retrieves a user by email address.
+     *
+     * <p>This method fetches a User entity by its email address, converts it to
+     * a UserDto, and returns the DTO.</p>
+     *
+     * @param email the email address of the user to be retrieved
+     * @return the UserDto object representing the user with the given email
+     * @throws RuntimeException if a user with the given email is not found
+     */
+
 
     @Override
     public UserDto getUserByEmail(String email) {
@@ -80,12 +143,31 @@ public class UserServiceImplementation implements UserService {
 
         return entityToDto(user);
     }
+    /**
+     * Searches for users by a keyword.
+     *
+     * <p>This method searches for User entities whose names contain the given
+     * keyword, converts them to UserDto objects, and returns a list of these DTOs.</p>
+     *
+     * @param keyword the search keyword used to filter users by name
+     * @return a list of UserDto objects that match the search keyword
+     */
+
 
     @Override
     public List<UserDto> searchUser(String keyword) {
         List<User> users = userRepository.findByNameContaining(keyword);
         return users.stream().map(this::entityToDto).toList();
     }
+    /**
+     * Converts a User entity to a UserDto object.
+     *
+     * <p>This method uses the configured mapper to transform a User entity into
+     * a UserDto object for data transfer between application layers.</p>
+     *
+     * @param savedUser the User entity to be converted
+     * @return a UserDto object with data populated from the entity
+     */
 
 
     private UserDto entityToDto(User savedUser) {
@@ -101,6 +183,15 @@ public class UserServiceImplementation implements UserService {
 //                .build();
         return mapper.map(savedUser,UserDto.class);
     }
+    /**
+     * Converts a UserDto object to a User entity.
+     *
+     * <p>This method uses the configured mapper to transform a UserDto into a
+     * User entity for use in database operations.</p>
+     *
+     * @param userDto the DTO object containing user information
+     * @return a User entity with data populated from the DTO
+     */
 
     private User dtoToEntity(UserDto userDto) {
 // Manual method
