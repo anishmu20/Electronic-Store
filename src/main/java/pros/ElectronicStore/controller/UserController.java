@@ -1,5 +1,6 @@
 package pros.ElectronicStore.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class UserController {
      */
 
     @PostMapping
-    public ResponseEntity<UserDto> create(@RequestBody UserDto userDto){
+    public ResponseEntity<UserDto> create(@Valid  @RequestBody UserDto userDto){
         UserDto userDto1 = userService.createUser(userDto);
         return new ResponseEntity<>(userDto1, HttpStatus.CREATED);
     }
@@ -47,7 +48,7 @@ public class UserController {
      * @return a ResponseEntity containing the updated UserDto and HTTP status 200 (OK)
      */
     @PutMapping("/{user_id}")
-    public  ResponseEntity<UserDto> update(@PathVariable("user_id") String user_id,@RequestBody UserDto userDto){
+    public  ResponseEntity<UserDto> update(@PathVariable("user_id") String user_id,@Valid @RequestBody UserDto userDto){
         UserDto updatedUser = userService.updateUser(userDto, user_id);
         return new ResponseEntity<>(updatedUser,HttpStatus.OK);
     }
