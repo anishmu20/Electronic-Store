@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pros.ElectronicStore.dtos.UserDto;
 import pros.ElectronicStore.entities.User;
+import pros.ElectronicStore.exceptions.ResourceNotFound;
 import pros.ElectronicStore.repositories.UserRepository;
 import pros.ElectronicStore.services.UserService;
 
@@ -59,13 +60,13 @@ public class UserServiceImplementation implements UserService {
      * @param userDto the DTO object containing updated user information
      * @param user_id the ID of the user to be updated
      * @return the updated UserDto object with the new details
-     * @throws RuntimeException if the user with the given ID is not found
+     * @throws ResourceNotFound if the user with the given ID is not found
      */
 
     @Override
     public UserDto updateUser(UserDto userDto, String user_id) {
 
-        User user = userRepository.findById(user_id).orElseThrow(() -> new RuntimeException("user with given id not found"));
+        User user = userRepository.findById(user_id).orElseThrow(() -> new ResourceNotFound("user with given id not found"));
         user.setName(userDto.getName());
         // email noy updating
         user.setPassword(userDto.getPassword());
@@ -84,12 +85,12 @@ public class UserServiceImplementation implements UserService {
      * from the database.</p>
      *
      * @param user_id the ID of the user to be deleted
-     * @throws RuntimeException if the user with the given ID is not found
+     * @throws ResourceNotFound if the user with the given ID is not found
      */
 
     @Override
     public void deleteUser(String user_id) {
-        User user = userRepository.findById(user_id).orElseThrow(() -> new RuntimeException("user with given id not found"));
+        User user = userRepository.findById(user_id).orElseThrow(() -> new ResourceNotFound("user with given id not found"));
         userRepository.delete(user);
 
     }
@@ -116,13 +117,13 @@ public class UserServiceImplementation implements UserService {
      *
      * @param user_id the ID of the user to be retrieved
      * @return the UserDto object representing the user with the given ID
-     * @throws RuntimeException if the user with the given ID is not found
+     * @throws ResourceNotFound if the user with the given ID is not found
      */
 
 
     @Override
     public UserDto getUserById(String user_id) {
-        User user = userRepository.findById(user_id).orElseThrow(() -> new RuntimeException("user with given id not found"));
+        User user = userRepository.findById(user_id).orElseThrow(() -> new ResourceNotFound("user with given id not found"));
         return entityToDto(user);
     }
     /**
@@ -133,13 +134,13 @@ public class UserServiceImplementation implements UserService {
      *
      * @param email the email address of the user to be retrieved
      * @return the UserDto object representing the user with the given email
-     * @throws RuntimeException if a user with the given email is not found
+     * @throws ResourceNotFound if a user with the given email is not found
      */
 
 
     @Override
     public UserDto getUserByEmail(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("user with this email not found"));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFound("user with this email not found"));
 
         return entityToDto(user);
     }
