@@ -20,7 +20,7 @@ public interface UserService {
 
     // getall
 
-    List<UserDto> getAllUser();
+    List<UserDto> getAllUser(int pageNumber,int pageSize,String sortBy,String sortDirection);
 
     // get single user
 

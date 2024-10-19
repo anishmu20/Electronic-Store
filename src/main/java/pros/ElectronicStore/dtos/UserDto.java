@@ -27,7 +27,7 @@ public class UserDto {
     @NotBlank(message = "Password is required !!")
     private String password;
     @Size(min = 4,max = 7,message = "Invalid gender !!")
-    private String Gender;
+    private String gender;
     @NotBlank
     private String about;
     @ImageValid

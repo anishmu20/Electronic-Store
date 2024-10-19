@@ -1,9 +1,11 @@
 package pros.ElectronicStore.services.Implementation;
 
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pros.ElectronicStore.dtos.UserDto;
 import pros.ElectronicStore.entities.User;
@@ -12,9 +14,7 @@ import pros.ElectronicStore.repositories.UserRepository;
 import pros.ElectronicStore.services.UserService;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImplementation implements UserService {
@@ -104,8 +104,11 @@ public class UserServiceImplementation implements UserService {
      */
 
     @Override
-    public List<UserDto> getAllUser() {
-        List<User> userlist = userRepository.findAll();
+    public List<UserDto> getAllUser(int pageNumber,int pageSize,String sortBy,String sortDirection) {
+        Sort sort=(sortDirection.equalsIgnoreCase("desc"))?(Sort.by(sortBy).descending()):(Sort.by(sortBy).ascending());
+        Pageable  pageable= PageRequest.of(pageNumber,pageSize,sort);
+        Page<User> pages = userRepository.findAll(pageable);
+        List<User> userlist = pages.getContent();
         return userlist.stream().map(this::entityToDto).toList();
 
     }
