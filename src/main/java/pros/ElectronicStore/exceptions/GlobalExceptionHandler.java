@@ -39,4 +39,11 @@ public class GlobalExceptionHandler {
 
          return new ResponseEntity<>(map,HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(BadApiRequestException.class)
+    public ResponseEntity<ApiResponseMessage> BadRequestException(BadApiRequestException ex){
+        logger.info("BadRequest invoked");
+        ApiResponseMessage response = ApiResponseMessage.builder().message(ex.getMessage()).success(false).status(HttpStatus.NOT_FOUND).build();
+        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+    }
 }
