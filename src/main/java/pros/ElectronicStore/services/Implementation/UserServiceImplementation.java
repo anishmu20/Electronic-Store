@@ -7,9 +7,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import pros.ElectronicStore.dtos.PageableResponse;
 import pros.ElectronicStore.dtos.UserDto;
 import pros.ElectronicStore.entities.User;
 import pros.ElectronicStore.exceptions.ResourceNotFound;
+import pros.ElectronicStore.helper.Helper;
 import pros.ElectronicStore.repositories.UserRepository;
 import pros.ElectronicStore.services.UserService;
 
@@ -104,12 +106,12 @@ public class UserServiceImplementation implements UserService {
      */
 
     @Override
-    public List<UserDto> getAllUser(int pageNumber,int pageSize,String sortBy,String sortDirection) {
+    public PageableResponse<UserDto> getAllUser(int pageNumber, int pageSize, String sortBy, String sortDirection) {
         Sort sort=(sortDirection.equalsIgnoreCase("desc"))?(Sort.by(sortBy).descending()):(Sort.by(sortBy).ascending());
         Pageable  pageable= PageRequest.of(pageNumber,pageSize,sort);
         Page<User> pages = userRepository.findAll(pageable);
-        List<User> userlist = pages.getContent();
-        return userlist.stream().map(this::entityToDto).toList();
+        PageableResponse<UserDto> pageResponse = Helper.getPageResponse(pages, UserDto.class);
+        return pageResponse;
 
     }
     /**
