@@ -1,10 +1,15 @@
 package pros.ElectronicStore.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pros.ElectronicStore.dtos.ApiResponseMessage;
@@ -14,7 +19,10 @@ import pros.ElectronicStore.dtos.UserDto;
 import pros.ElectronicStore.services.FileService;
 import pros.ElectronicStore.services.UserService;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 @RestController
@@ -28,6 +36,8 @@ public class UserController {
     private FileService fileService;
     @Value("${user.image.profile.active}")
     private String ImagePath;        // value for this is defined in the application.properties file
+
+    private Logger logger= LoggerFactory.getLogger(UserController.class);
     /**
      * Creates a new user in the system.
      *
@@ -167,5 +177,14 @@ public class UserController {
         ImageResponse imageResponse=ImageResponse.builder().ImageName(imageName).message("Image Upload Successfully").
         success(true).status(HttpStatus.CREATED).build();
         return new ResponseEntity<>(imageResponse,HttpStatus.CREATED);
+    }
+    @GetMapping("/download/image/{userId}")
+    public void serveImage(@PathVariable("userId") String userId, HttpServletResponse response) throws IOException {
+        UserDto userById = userService.getUserById(userId);
+        logger.info("Image name : {} ",userById.getImageName());
+        InputStream resource = fileService.getResource(ImagePath, userById.getImageName());
+        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+        StreamUtils.copy(resource, response.getOutputStream());
+
     }
 }

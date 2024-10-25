@@ -1,7 +1,10 @@
 package pros.ElectronicStore.services.Implementation;
 
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +18,11 @@ import pros.ElectronicStore.helper.Helper;
 import pros.ElectronicStore.repositories.UserRepository;
 import pros.ElectronicStore.services.UserService;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,6 +32,10 @@ public class UserServiceImplementation implements UserService {
     private UserRepository userRepository;
     @Autowired
     private ModelMapper mapper;
+
+    private Logger  logger= LoggerFactory.getLogger(UserServiceImplementation.class);
+    @Value("${user.image.profile.active}")
+    private String ImagePath;
 
     /**
      * Creates a new user in the system.
@@ -93,6 +105,18 @@ public class UserServiceImplementation implements UserService {
     @Override
     public void deleteUser(String user_id) {
         User user = userRepository.findById(user_id).orElseThrow(() -> new ResourceNotFound("user with given id not found"));
+        // delete Image of user if present
+        String FullPath=ImagePath+user.getImageName();
+        try{
+            Path path = Paths.get(FullPath);
+            Files.delete(path);
+        } catch (NoSuchFileException ex){
+            logger.info("User image not found in this Folder ");
+            ex.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         userRepository.delete(user);
 
     }

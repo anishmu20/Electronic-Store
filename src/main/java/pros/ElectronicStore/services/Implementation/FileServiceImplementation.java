@@ -23,7 +23,9 @@ public class FileServiceImplementation implements FileService {
         String filename= UUID.randomUUID().toString();
         String extension=originalFileName.substring(originalFileName.lastIndexOf("."));
         String FileNameWithExtension=filename+extension;
-        String FullPathWithFileName=path+FileNameWithExtension;
+        logger.info(FileNameWithExtension);
+        String FullPathWithFileName=Paths.get(path,FileNameWithExtension).toString();
+        logger.info(FullPathWithFileName);
         if (extension.equalsIgnoreCase(".png") || extension.equalsIgnoreCase(".jpg") || extension.equalsIgnoreCase(".jpeg")){
             // file save
             File folder=new File(path);
@@ -44,6 +46,7 @@ public class FileServiceImplementation implements FileService {
     @Override
     public InputStream getResource(String path,String name) throws FileNotFoundException {
         String fullPath=path+File.separator+name;
+        logger.info(fullPath);
         InputStream inputStream= new FileInputStream(fullPath);
         return inputStream;
     }
