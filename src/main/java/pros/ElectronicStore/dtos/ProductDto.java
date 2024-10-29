@@ -43,5 +43,6 @@ public class ProductDto {
     @NotBlank(message = "this is field is required !!")
     private int modelYear;
 
+    private String productImage;
 
 }

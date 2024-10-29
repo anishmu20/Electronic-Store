@@ -44,4 +44,7 @@ public class Product {
 
     @Column(name = "product_modelYear")
     private int modelYear;
+
+    @Column(name = "product_image")
+    private String productImage;
 }
