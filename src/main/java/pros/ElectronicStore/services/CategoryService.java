@@ -3,6 +3,9 @@ package pros.ElectronicStore.services;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import pros.ElectronicStore.dtos.CategoryDto;
 import pros.ElectronicStore.dtos.PageableResponse;
+import pros.ElectronicStore.dtos.UserDto;
+
+import java.util.List;
 
 public interface CategoryService {
 
@@ -16,6 +19,8 @@ public interface CategoryService {
 
 
     void delete(String id);
+
+    List<CategoryDto> searchCategory(String keyword);
 
 
 

@@ -9,6 +9,8 @@ import pros.ElectronicStore.dtos.CategoryDto;
 import pros.ElectronicStore.dtos.PageableResponse;
 import pros.ElectronicStore.services.CategoryService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/categories")
 public class CategoryController {
@@ -27,9 +29,9 @@ public class CategoryController {
     @GetMapping
     public ResponseEntity<PageableResponse<CategoryDto>> getAllUser(
             @RequestParam(value = "pageNumber",defaultValue = "0",required = false) int pageNumber ,
-            @RequestParam(value = "pageSize",defaultValue = "0",required = false) int pageSize,
-            @RequestParam(value = "sortBy",required = false) String sortBy,
-            @RequestParam(value = "sortDir",required = false) String sortDir
+            @RequestParam(value = "pageSize",defaultValue = "10",required = false) int pageSize,
+            @RequestParam(value = "sortBy",required = false,defaultValue = "title") String sortBy,
+            @RequestParam(value = "sortDir",required = false,defaultValue = "asc") String sortDir
     )
     {
         PageableResponse<CategoryDto> allCategories = categoryService.getAllCategories(pageNumber, pageSize, sortBy, sortDir);
@@ -38,7 +40,7 @@ public class CategoryController {
 
     //getSingle
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryDto> getSingle(@PathVariable String id ){
+    public ResponseEntity<CategoryDto> getSingle(@PathVariable("id") String id ){
         CategoryDto categoryById = categoryService.getCategoryById(id);
         return  new ResponseEntity<>(categoryById,HttpStatus.OK);
 
@@ -60,7 +62,11 @@ public class CategoryController {
          return new  ResponseEntity<>(response,HttpStatus.OK);
     }
 
-
+    @GetMapping("/search/{keywords}")
+    public ResponseEntity<List<CategoryDto>> searchCategory(@PathVariable("keywords") String keyword){
+        List<CategoryDto> categoryDtos = categoryService.searchCategory(keyword);
+        return ResponseEntity.ok(categoryDtos);
+    }
 
 
 }
