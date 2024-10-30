@@ -1,10 +1,9 @@
 package pros.ElectronicStore.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "Categories")
@@ -24,5 +23,8 @@ public class Category {
     private String description;
     @Column(name = "category_Image")
     private String coverImage;
+
+    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private List<Product> products;
 
 }

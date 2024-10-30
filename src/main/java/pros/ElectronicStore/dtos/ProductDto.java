@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.*;
+import pros.ElectronicStore.entities.Category;
 
 import java.util.Date;
 
@@ -44,5 +45,8 @@ public class ProductDto {
     private int modelYear;
 
     private String productImage;
+
+    private CategoryDto category;
+
 
 }
