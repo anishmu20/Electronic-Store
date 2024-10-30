@@ -9,12 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import pros.ElectronicStore.dtos.ApiResponseMessage;
-import pros.ElectronicStore.dtos.CategoryDto;
-import pros.ElectronicStore.dtos.ImageResponse;
-import pros.ElectronicStore.dtos.PageableResponse;
+import pros.ElectronicStore.dtos.*;
 import pros.ElectronicStore.services.CategoryService;
 import pros.ElectronicStore.services.FileService;
+import pros.ElectronicStore.services.ProductService;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -33,6 +31,9 @@ public class CategoryController {
 
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    ProductService  productService;
 
     //create
     @PostMapping
@@ -107,6 +108,34 @@ public class CategoryController {
         response.setContentType(MediaType.IMAGE_JPEG_VALUE);
         StreamUtils.copy(resource,response.getOutputStream());
 
+    }
+
+    @PostMapping("/{categoryId}/products")
+    public ResponseEntity<ProductDto> createWithCategory(
+     @PathVariable("categoryId") String categoryId,
+     @RequestBody ProductDto  productDto
+    ){
+        ProductDto withCategory = productService.createWithCategory(productDto, categoryId);
+        return new ResponseEntity<>(withCategory,HttpStatus.OK);
+    }
+
+    @PutMapping("/{categoryId}/{productId}")
+    public ResponseEntity<ProductDto> update(@PathVariable("categoryId") String categoryId,
+      @PathVariable("productId")  String productId){
+        ProductDto updateProduct = productService.update(categoryId, productId);
+        return new ResponseEntity<>(updateProduct,HttpStatus.OK);
+    }
+
+    @GetMapping("/sameCategoryProducts/{categoryId}")
+    public ResponseEntity<PageableResponse<ProductDto>> sameCategoryProducts(
+     @RequestParam(value = "pageNumber",defaultValue = "0",required = false) int pageNumber,
+     @RequestParam(value = "pageSize",defaultValue = "5",required = false) int pageSize,
+     @RequestParam(value = "sortBy",defaultValue = "productName",required = false) String sortBy,
+     @RequestParam(value = "sortDir",defaultValue = "asc",required = false) String sortDir,
+     @PathVariable("categoryId") String categoryId
+    ){
+        PageableResponse<ProductDto> allProductWithSameCategory = productService.findAllProductWithSameCategory(categoryId, pageNumber, pageSize, sortBy, sortDir);
+        return new ResponseEntity<>(allProductWithSameCategory,HttpStatus.OK);
     }
 
 }

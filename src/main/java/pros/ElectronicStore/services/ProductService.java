@@ -15,6 +15,11 @@ public interface ProductService {
     void delete(String productId);
     PageableResponse<ProductDto> search(String keyword,int pageNumber,int pageSize,String sortBy,String sortDir);
 
+    ProductDto createWithCategory(ProductDto productDto,String categoryId);
+
+    ProductDto update(String categoryId,String productId);
+
+    PageableResponse<ProductDto>findAllProductWithSameCategory (String categoryId,int pageNumber,int pageSize,String sortBy,String sortDir);
 
 
 }
