@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+
 @Builder
 @Entity
 @Table(name = "cart")
@@ -26,6 +27,7 @@ public class Cart {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    private List<CartItem> cartItems=new ArrayList<>();
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.EAGER,orphanRemoval = true)
+    private List<CartItem> cartItems = new ArrayList<>();
+
 }

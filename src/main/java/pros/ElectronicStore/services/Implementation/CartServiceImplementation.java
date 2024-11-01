@@ -1,7 +1,11 @@
 package pros.ElectronicStore.services.Implementation;
 
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import pros.ElectronicStore.dtos.CartDto;
 import pros.ElectronicStore.entities.Cart;
 import pros.ElectronicStore.entities.CartItem;
@@ -19,7 +23,9 @@ import pros.ElectronicStore.services.CartService;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
+@Service
 public class CartServiceImplementation implements CartService {
 
     @Autowired
@@ -38,50 +44,57 @@ public class CartServiceImplementation implements CartService {
     private CartItemRepository  cartItemRepository;
 
 
+    private Logger logger= LoggerFactory.getLogger(CartServiceImplementation.class);
+
+
     @Override
     public CartDto addedNewItemsToCart(String userId, addedNewItemsDetails request) {
-
         String productId = request.getProductId();
         int quantity = request.getQuantity();
+        Product product = productRepository.findById(productId).orElseThrow(() -> new ResourceNotFound("Product not found in the database!! "));
+        User user=userRepository.findById(userId).orElseThrow(()-> new ResourceNotFound("user not found in the database!!"));
         if (quantity<=0){
-            throw new  BadApiRequestException("quantity value is invalid");
+            throw new ResourceNotFound("Request quantity is not valid");
         }
 
-        Product product = productRepository.findById(productId).orElseThrow(() -> new ResourceNotFound("Product not in the database !!"));
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFound("User not found in the database !!"));
-        Cart cart=null;
-        try {
-            cart = cartRepository.findByUser(user).get();
+        Cart cart =null;
+        boolean updated=false;
+        try{
+            cart=cartRepository.findByUser(user).get();
+
         }catch (NoSuchElementException e){
-            cart = new Cart();
-            cart.setCartId(UUID.randomUUID().toString().substring(0,8));
+            cart=new Cart();
             cart.setCreateAt(new Date());
+            cart.setCartId(UUID.randomUUID().toString().substring(0,8));
         }
-        // cart operation
-        // what if cartItem has already exists ;
 
-        List<CartItem> items=cart.getCartItems();
-        AtomicReference<Boolean> updated=new AtomicReference<>(false);
-        List<CartItem> updatedItems = items.stream().map((item) -> {
+        // perform cart operation
+        List<CartItem> items = cart.getCartItems();
+        for (CartItem item : cart.getCartItems()) {
             if (item.getProduct().getProductId().equals(productId)) {
                 item.setQuantity(quantity);
                 item.setTotal_price(quantity * product.getPrice());
-                updated.set(true);
+                updated = true;
+                break;
             }
+        }
 
-            return item;
+        cart.setCartItems(items);
 
-        }).toList();
-        cart.setCartItems(updatedItems);
-
-        if (!updated.get()){
-        CartItem cartItem = CartItem.builder().cart(cart).product(product).total_price(quantity * product.getPrice()).build();
-        cart.getCartItems().add(cartItem);}
-
-
+        if (!updated){
+            // create new item
+            CartItem cartItem = CartItem.builder()
+                    .cart(cart)
+                    .quantity(quantity)
+                    .total_price(quantity * product.getDiscountedPrice())
+                    .product(product)
+                    .build();
+            cart.getCartItems().add(cartItem);
+        }
         cart.setUser(user);
-        Cart updatedCart = cartRepository.save(cart);
-        return mapper.map(updatedCart,CartDto.class);
+        Cart save = cartRepository.save(cart);
+        return mapper.map(save,CartDto.class);
+
     }
 
     @Override
