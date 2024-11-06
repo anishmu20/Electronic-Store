@@ -1,5 +1,6 @@
 package pros.ElectronicStore.services;
 
+import pros.ElectronicStore.dtos.CreateOrderRequest;
 import pros.ElectronicStore.dtos.OrderDto;
 import pros.ElectronicStore.dtos.PageableResponse;
 
@@ -9,7 +10,7 @@ public interface OrderService {
 
 
     // create order
-    OrderDto create(OrderDto orderDto,String userId,String cartId);
+    OrderDto create(CreateOrderRequest orderDto);
 
     // remove order
     void remove(String orderId);
@@ -19,6 +20,8 @@ public interface OrderService {
 
     // get all orders of the user
     List<OrderDto> getOrdersOfUser(String userId);
+
+    OrderDto update(String orderId);
 
 
 
