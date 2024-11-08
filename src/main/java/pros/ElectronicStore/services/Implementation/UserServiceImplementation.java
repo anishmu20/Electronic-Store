@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pros.ElectronicStore.dtos.PageableResponse;
 import pros.ElectronicStore.dtos.UserDto;
@@ -33,6 +34,9 @@ public class UserServiceImplementation implements UserService {
     @Autowired
     private ModelMapper mapper;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     private Logger  logger= LoggerFactory.getLogger(UserServiceImplementation.class);
     @Value("${user.image.profile.active}")
     private String ImagePath;
@@ -54,6 +58,7 @@ public class UserServiceImplementation implements UserService {
      // generate id
         String id = UUID.randomUUID().toString();
         userDto.setUserId(id);
+        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         //Dto-entity
         User user=dtoToEntity(userDto);
         User savedUser = userRepository.save(user);
