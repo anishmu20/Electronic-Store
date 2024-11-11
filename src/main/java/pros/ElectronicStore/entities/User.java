@@ -3,11 +3,14 @@ package pros.ElectronicStore.entities;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -39,10 +42,14 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
     private List<Order> order=new ArrayList<>();
 
+    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private List<Role> roles;
+
     // It is implemented later this is important
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        Set<SimpleGrantedAuthority> authorities = roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toSet());
+        return authorities;
     }
 
     @Override

@@ -13,9 +13,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pros.ElectronicStore.dtos.PageableResponse;
 import pros.ElectronicStore.dtos.UserDto;
+import pros.ElectronicStore.entities.Role;
 import pros.ElectronicStore.entities.User;
 import pros.ElectronicStore.exceptions.ResourceNotFound;
 import pros.ElectronicStore.helper.Helper;
+import pros.ElectronicStore.repositories.RoleRepository;
 import pros.ElectronicStore.repositories.UserRepository;
 import pros.ElectronicStore.services.UserService;
 
@@ -31,8 +33,12 @@ import java.util.UUID;
 public class UserServiceImplementation implements UserService {
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private ModelMapper mapper;
+
+    @Autowired
+    private RoleRepository roleRepository ;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -59,8 +65,18 @@ public class UserServiceImplementation implements UserService {
         String id = UUID.randomUUID().toString();
         userDto.setUserId(id);
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+
+
+
         //Dto-entity
         User user=dtoToEntity(userDto);
+        // ASSIGNING THE DEFAULT ROLE
+        Role role1=new Role();
+        role1.setRoleId(UUID.randomUUID().toString().substring(0,3));
+        role1.setName("ROLE_NORMAL");
+        Role role=roleRepository.findByName("ROLE_NORMAL").orElse(role1);
+
+        user.setRoles(List.of(role));
         User savedUser = userRepository.save(user);
 
         // entity to dto
@@ -87,8 +103,8 @@ public class UserServiceImplementation implements UserService {
 
         User user = userRepository.findById(user_id).orElseThrow(() -> new ResourceNotFound("user with given id not found"));
         user.setName(userDto.getName());
-        // email noy updating
-        user.setPassword(userDto.getPassword());
+        // email not updating
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user.setImageName(userDto.getImageName());
         user.setGender(userDto.getGender());
         user.setAbout(userDto.getAbout());
@@ -121,8 +137,10 @@ public class UserServiceImplementation implements UserService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        user.getRoles().clear();
+        User saved = userRepository.save(user);
 
-        userRepository.delete(user);
+        userRepository.delete(saved);
 
     }
     /**

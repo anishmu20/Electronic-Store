@@ -9,6 +9,8 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import pros.ElectronicStore.Validation.ImageValid;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -32,5 +34,7 @@ public class UserDto {
     private String about;
     @ImageValid
     private String imageName;
+
+    private List<RoleDto> roles;
 
 }
