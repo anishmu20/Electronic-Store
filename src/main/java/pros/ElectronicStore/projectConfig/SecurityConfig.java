@@ -1,55 +1,51 @@
 package pros.ElectronicStore.projectConfig;
 
-import jakarta.servlet.http.HttpFilter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     @Autowired
     private UserDetailsService userDetailsService;
 
-//    @Bean
-//    public UserDetailsService userDetailsService(){
-//
-//        UserDetails user1 = User.builder()
-//                .username("anish")
-//                .password(passwordEncoder().encode("anish"))
-//                .roles("Normal")
-//                .build();
-//
-//        UserDetails user2 =User.builder()
-//                .username("Akhil")
-//                .password(passwordEncoder().encode("akhil123"))
-//                .roles("ADMIN")
-//                .build();
-//
-//        return new InMemoryUserDetailsManager( user1,  user2);
-//    }
-    // below show the basic implementation of the Basic Auth
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
-        http.csrf().disable()
-                .cors().disable()
-                .authorizeRequests()
-                .anyRequest()
-                .authenticated()
-                .and()
-                .httpBasic();
+        httpSecurity.cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.disable());
+        httpSecurity.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable());
 
-        return http.build();
+        httpSecurity.authorizeHttpRequests(
+                request->{
+                    request
+                            .requestMatchers(HttpMethod.DELETE,"/users/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.PUT,"/users/**").hasAnyRole("ADMIN","NORMAL")
+                            .requestMatchers(HttpMethod.GET,"/products/**").permitAll()
+                            .requestMatchers("/products/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.GET,"/users/**").permitAll()
+                            .requestMatchers(HttpMethod.GET,"/categories/**").permitAll()
+                            .requestMatchers("/categories/**").hasRole("ADMIN");
+
+
+                }
+                );
+
+        // Security type -- as of now it is basic
+        httpSecurity.httpBasic(Customizer.withDefaults());
+        return httpSecurity.build();
     }
 
 
