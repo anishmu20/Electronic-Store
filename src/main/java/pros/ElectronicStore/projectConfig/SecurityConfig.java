@@ -41,7 +41,8 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.GET,"/users/**").permitAll()
                             .requestMatchers(HttpMethod.POST,"/users").permitAll()
                             .requestMatchers(HttpMethod.GET,"/categories/**").permitAll()
-                            .requestMatchers("/categories/**").hasRole("ADMIN");
+                            .requestMatchers("/categories/**").hasRole("ADMIN")
+                            .anyRequest().permitAll();
                 }
                 );
 

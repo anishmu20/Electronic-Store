@@ -7,10 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pros.ElectronicStore.dtos.CartDto;
-import pros.ElectronicStore.entities.Cart;
-import pros.ElectronicStore.entities.CartItem;
-import pros.ElectronicStore.entities.Product;
-import pros.ElectronicStore.entities.User;
+import pros.ElectronicStore.dtos.CartItemDto;
+import pros.ElectronicStore.dtos.UserDto;
+import pros.ElectronicStore.entities.*;
 import pros.ElectronicStore.exceptions.BadApiRequestException;
 import pros.ElectronicStore.exceptions.ResourceNotFound;
 import pros.ElectronicStore.helper.addedNewItemsDetails;
@@ -49,52 +48,49 @@ public class CartServiceImplementation implements CartService {
 
     @Override
     public CartDto addedNewItemsToCart(String userId, addedNewItemsDetails request) {
+
         String productId = request.getProductId();
         int quantity = request.getQuantity();
-        Product product = productRepository.findById(productId).orElseThrow(() -> new ResourceNotFound("Product not found in the database!! "));
-        User user=userRepository.findById(userId).orElseThrow(()-> new ResourceNotFound("user not found in the database!!"));
-        if (quantity<=0){
-            throw new ResourceNotFound("Request quantity is not valid");
-        }
 
-        Cart cart =null;
-        boolean updated=false;
+        Product product = productRepository.findById(productId).orElseThrow(() -> new ResourceNotFound("Product not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFound("User not found"));
+
+        Cart cart=null;
+        boolean update=false;
         try{
-            cart=cartRepository.findByUser(user).get();
+             cart=cartRepository.findByUser(user).get();
 
         }catch (NoSuchElementException e){
             cart=new Cart();
+            cart.setCartId(UUID.randomUUID().toString().substring(0,9));
             cart.setCreateAt(new Date());
-            cart.setCartId(UUID.randomUUID().toString().substring(0,8));
         }
 
-        // perform cart operation
-        List<CartItem> items = cart.getCartItems();
-        for (CartItem item : cart.getCartItems()) {
-            if (item.getProduct().getProductId().equals(productId)) {
-                item.setQuantity(quantity);
-                item.setTotal_price(quantity * product.getPrice());
-                updated = true;
+        List<CartItem> cartItems = cart.getCartItems();
+        for (CartItem item : cartItems){
+            if (item.getCartIdProductId().equals(cart.getCartId()+productId)){
+                item.setQuantity(item.getQuantity()+quantity);
+                item.setTotal_price(item.getTotal_price()+quantity*product.getDiscountedPrice());
+                update=true;
                 break;
             }
         }
+        cart.setCartItems(cartItems);
 
-        cart.setCartItems(items);
-
-        if (!updated){
-            // create new item
+        if (!update){
+            // creating new cartItem
             CartItem cartItem = CartItem.builder()
-                    .cart(cart)
+                    .cartIdProductId(cart.getCartId() + productId)
                     .quantity(quantity)
-                    .total_price(quantity * product.getDiscountedPrice())
                     .product(product)
+                    .cart(cart)
+                    .total_price(quantity * product.getDiscountedPrice())
                     .build();
-            cart.getCartItems().add(cartItem);
+              cart.getCartItems().add(cartItem);
         }
         cart.setUser(user);
         Cart save = cartRepository.save(cart);
         return mapper.map(save,CartDto.class);
-
     }
 
     @Override
