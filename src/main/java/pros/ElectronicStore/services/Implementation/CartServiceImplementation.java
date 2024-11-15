@@ -1,16 +1,13 @@
 package pros.ElectronicStore.services.Implementation;
 
-import jakarta.transaction.Transactional;
+
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pros.ElectronicStore.dtos.CartDto;
-import pros.ElectronicStore.dtos.CartItemDto;
-import pros.ElectronicStore.dtos.UserDto;
 import pros.ElectronicStore.entities.*;
-import pros.ElectronicStore.exceptions.BadApiRequestException;
 import pros.ElectronicStore.exceptions.ResourceNotFound;
 import pros.ElectronicStore.helper.addedNewItemsDetails;
 import pros.ElectronicStore.repositories.CartItemRepository;
@@ -20,9 +17,7 @@ import pros.ElectronicStore.repositories.UserRepository;
 import pros.ElectronicStore.services.CartService;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
+
 
 @Service
 public class CartServiceImplementation implements CartService {
