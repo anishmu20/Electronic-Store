@@ -16,10 +16,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-
+@Component
 public class JWTAuthencationFilter extends OncePerRequestFilter {
 
     @Autowired
@@ -44,13 +45,13 @@ public class JWTAuthencationFilter extends OncePerRequestFilter {
             try{
                 username=jwtHelper.getUsernameFromToken(token);
             }catch (IllegalArgumentException ex){
-                logger.info("IllegalArgument while fetching the user "+ex.getMessage());
+                logger.info("IllegalArgument while fetching the user {}", ex.getMessage());
             }
             catch (ExpiredJwtException ex){
-                logger.info("Given jwt is expired "+ex.getMessage());
+                logger.info("Given jwt is expired {}", ex.getMessage());
             }
             catch (MalformedJwtException ex){
-                logger.info("some changes has been made to original token "+ex.getMessage());
+                logger.info("some changes has been made to original token {}", ex.getMessage());
             }
 
         }
