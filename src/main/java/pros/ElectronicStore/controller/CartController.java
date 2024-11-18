@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import pros.ElectronicStore.dtos.ApiResponseMessage;
 import pros.ElectronicStore.dtos.CartDto;
 import pros.ElectronicStore.helper.addedNewItemsDetails;
+import pros.ElectronicStore.projectConfig.AppConstants;
 import pros.ElectronicStore.services.CartService;
 
 @RestController
@@ -17,26 +18,26 @@ public class CartController {
 
     @Autowired
     CartService  cartService;
-    @PreAuthorize("hasAnyRole('ADMIN','NORMAL')")
+    @PreAuthorize("hasAnyRole('"+ AppConstants.ROLE_ADMIN +"','"+AppConstants.ROLE_NORMAL+"')")
     @PostMapping("/{userId}")
     public ResponseEntity<CartDto> addItems(@RequestBody addedNewItemsDetails itemsDetails, @PathVariable ("userId") String userId){
         CartDto cartDto = cartService.addedNewItemsToCart(userId, itemsDetails);
         return new ResponseEntity<>(cartDto, HttpStatus.CREATED);
     }
-    @PreAuthorize("hasAnyRole('ADMIN','NORMAL')")
+    @PreAuthorize("hasAnyRole('"+ AppConstants.ROLE_ADMIN +"','"+AppConstants.ROLE_NORMAL+"')")
     @GetMapping("/{userId}")
     public ResponseEntity<CartDto> getUserCart(@PathVariable ("userId") String userId){
         CartDto cartByUser = cartService.getCartByUser(userId);
         return  new ResponseEntity<>(cartByUser,HttpStatus.OK);
     }
-    @PreAuthorize("hasAnyRole('ADMIN','NORMAL')")
+    @PreAuthorize("hasAnyRole('"+ AppConstants.ROLE_ADMIN +"','"+AppConstants.ROLE_NORMAL+"')")
     @DeleteMapping("/items/{userId}/{itemId}")
     public ResponseEntity<ApiResponseMessage> remove(@PathVariable("itemId") int id,@PathVariable ("userId") String userId){
         cartService.remove(userId,id);
         ApiResponseMessage itemRemovedFromCart = ApiResponseMessage.builder().message("item removed from cart").success(true).status(HttpStatus.OK).build();
       return  new ResponseEntity<>(itemRemovedFromCart,HttpStatus.OK);
     }
-    @PreAuthorize("hasAnyRole('ADMIN','NORMAL')")
+    @PreAuthorize("hasAnyRole('"+ AppConstants.ROLE_ADMIN +"','"+AppConstants.ROLE_NORMAL+"')")
     @DeleteMapping("/items/{userId}")
     public ResponseEntity<ApiResponseMessage> clearCart(@PathVariable ("userId") String userId){
         cartService.clearCart(userId);

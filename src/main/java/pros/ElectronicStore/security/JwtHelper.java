@@ -5,6 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -18,8 +19,8 @@ import java.util.Map;
 public class JwtHelper {
 
    private static final long JWT_TOKEN_VALIDITY = 60*60;
-
-   private final String  SECRET_KEY="dfbhfdbhjhgbjlfgbhjbgjkbgfdjhbfedjgbriejghreighefdujghfdjgghjgh";
+   @Value("${jwt.secret.key}")
+   private String  SECRET_KEY;
 
    public String getUsernameFromToken(String token){
        String username= getClaimsFromToken(token).getSubject();
@@ -47,12 +48,5 @@ public class JwtHelper {
                .signWith(new SecretKeySpec(SECRET_KEY.getBytes(), SignatureAlgorithm.HS256.getJcaName()),SignatureAlgorithm.HS256)
                .compact();
    }
-
-
-
-
-
-
-
 
 }

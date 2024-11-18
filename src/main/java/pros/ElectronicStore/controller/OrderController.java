@@ -11,6 +11,7 @@ import pros.ElectronicStore.dtos.ApiResponseMessage;
 import pros.ElectronicStore.dtos.CreateOrderRequest;
 import pros.ElectronicStore.dtos.OrderDto;
 import pros.ElectronicStore.dtos.PageableResponse;
+import pros.ElectronicStore.projectConfig.AppConstants;
 import pros.ElectronicStore.services.OrderService;
 
 import java.util.List;
@@ -23,12 +24,12 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN','NORMAL')")
+    @PreAuthorize("hasAnyRole('"+ AppConstants.ROLE_ADMIN +"','"+AppConstants.ROLE_NORMAL+"')")
     public ResponseEntity<OrderDto> create(@Valid  @RequestBody CreateOrderRequest request){
         OrderDto orderDto = orderService.create(request);
         return  new ResponseEntity<>(orderDto, HttpStatus.CREATED);
     }
-    @PreAuthorize("hasRole('NORMAL')")
+    @PreAuthorize("hasRole('"+AppConstants.ROLE_NORMAL+"')")
     @DeleteMapping("/{orderId}")
     public ResponseEntity<ApiResponseMessage> remove(@PathVariable String orderId){
         orderService.remove(orderId);
@@ -39,7 +40,7 @@ public class OrderController {
                 .build();
         return new ResponseEntity<>(orderDeletedSuccessfully,HttpStatus.OK);
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('"+AppConstants.ROLE_ADMIN+"')")
     @GetMapping
     public ResponseEntity<PageableResponse<OrderDto>> getAll(
             @RequestParam(value = "pageNumber",defaultValue = "0",required = false)int pageNumber,
@@ -50,13 +51,13 @@ public class OrderController {
         PageableResponse<OrderDto> all = orderService.getAll(pageNumber, pageSize, sortBy, sortDirection);
         return new ResponseEntity<>(all,HttpStatus.OK);
     }
-    @PreAuthorize("hasAnyRole('ADMIN','NORMAL')")
+    @PreAuthorize("hasAnyRole('"+ AppConstants.ROLE_ADMIN +"','"+AppConstants.ROLE_NORMAL+"')")
     @GetMapping("/users/{userId}")
     public ResponseEntity<List<OrderDto>> get(@PathVariable String userId){
         List<OrderDto> ordersOfUser = orderService.getOrdersOfUser(userId);
         return new ResponseEntity<>(ordersOfUser,HttpStatus.OK);
     }
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('"+AppConstants.ROLE_ADMIN+"')")
     @PutMapping("/{orderId}")
     public ResponseEntity<OrderDto> update(@PathVariable("orderId") String orderId){
         OrderDto update = orderService.update(orderId);
