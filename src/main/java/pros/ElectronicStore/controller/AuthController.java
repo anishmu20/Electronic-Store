@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
+import pros.ElectronicStore.dtos.GoogleLogin;
 import pros.ElectronicStore.dtos.JWTRequest;
 import pros.ElectronicStore.dtos.JWTResponse;
 import pros.ElectronicStore.dtos.UserDto;
@@ -60,4 +61,11 @@ public class AuthController {
             throw new BadCredentialsException("Invalid email and password");
         }
     }
+
+    @PostMapping("/login-with-google")
+    public ResponseEntity<JWTResponse>LoginWithGoogle(@RequestBody GoogleLogin request ){
+        logger.info("Google Token : {}",request.getGoogleToken());
+        return null;
+    }
+
 }
