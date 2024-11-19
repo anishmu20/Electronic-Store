@@ -50,7 +50,7 @@ public class SecurityConfig {
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                         CorsConfiguration corsConfiguration=new CorsConfiguration();
-                        corsConfiguration.addAllowedOrigin("http://localhost:5000");
+                        corsConfiguration.addAllowedOrigin("http://localhost:3000");
                         corsConfiguration.setMaxAge(4000L);
                         corsConfiguration.setAllowedMethods(List.of("*"));
                         corsConfiguration.setAllowedHeaders(List.of("*"));
@@ -75,7 +75,7 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.POST,"/users").permitAll()
                             .requestMatchers(HttpMethod.GET,"/categories/**").permitAll()
                             .requestMatchers("/categories/**").hasRole(AppConstants.ROLE_ADMIN)
-                            .requestMatchers(HttpMethod.POST,"/auth/generate-token").permitAll()
+                            .requestMatchers(HttpMethod.POST,"/auth/generate-token","/auth/login-with-google").permitAll()
                             .requestMatchers("/auth/**").authenticated()
                             .anyRequest().permitAll();
                 }
