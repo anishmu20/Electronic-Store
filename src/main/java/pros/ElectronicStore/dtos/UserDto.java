@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import pros.ElectronicStore.Validation.ImageValid;
+import pros.ElectronicStore.entities.Providers;
 
 import java.util.List;
 
@@ -36,5 +37,7 @@ public class UserDto {
     private String imageName;
 
     private List<RoleDto> roles;
+
+    private Providers providers;
 
 }
