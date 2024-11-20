@@ -16,6 +16,7 @@ import pros.ElectronicStore.dtos.ApiResponseMessage;
 import pros.ElectronicStore.dtos.ImageResponse;
 import pros.ElectronicStore.dtos.PageableResponse;
 import pros.ElectronicStore.dtos.UserDto;
+import pros.ElectronicStore.entities.Providers;
 import pros.ElectronicStore.services.FileService;
 import pros.ElectronicStore.services.UserService;
 
@@ -52,6 +53,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserDto> create(@Valid  @RequestBody UserDto userDto){
+        userDto.setProviders(Providers.SELF);
         UserDto userDto1 = userService.createUser(userDto);
         return new ResponseEntity<>(userDto1, HttpStatus.CREATED);
     }

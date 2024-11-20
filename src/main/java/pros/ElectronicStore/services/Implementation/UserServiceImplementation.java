@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pros.ElectronicStore.dtos.PageableResponse;
 import pros.ElectronicStore.dtos.UserDto;
+import pros.ElectronicStore.entities.Providers;
 import pros.ElectronicStore.entities.Role;
 import pros.ElectronicStore.entities.User;
 import pros.ElectronicStore.exceptions.ResourceNotFound;
@@ -65,6 +66,7 @@ public class UserServiceImplementation implements UserService {
         String id = UUID.randomUUID().toString();
         userDto.setUserId(id);
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+
 
 
 
