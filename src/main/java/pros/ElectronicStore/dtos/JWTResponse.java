@@ -13,6 +13,6 @@ public class JWTResponse {
 
     private  UserDto user;
 
-    private String refreshToken;
+    private RefreshTokenDto refreshToken;
 
 }
