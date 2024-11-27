@@ -38,6 +38,11 @@ public class SecurityConfig {
     @Autowired
     private JWTAuthencationFilter  filter;
 
+    private String [] PUBLIC_URLS={
+            "/swagger-ui/**",
+            "/webjars/*",
+            "/swagger-resources/**"
+    };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -73,6 +78,7 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.GET,"/categories/**").permitAll()
                             .requestMatchers("/categories/**").hasRole(AppConstants.ROLE_ADMIN)
                             .requestMatchers(HttpMethod.POST,"/auth/generate-token","/auth/login-with-google","auth/regenerate-token").permitAll()
+                            .requestMatchers(PUBLIC_URLS).permitAll()
                             .requestMatchers("/auth/**").authenticated()
                             .anyRequest().permitAll();
                 }
