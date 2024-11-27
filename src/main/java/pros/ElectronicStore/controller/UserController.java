@@ -1,5 +1,8 @@
 package pros.ElectronicStore.controller;
 
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -20,14 +23,14 @@ import pros.ElectronicStore.entities.Providers;
 import pros.ElectronicStore.services.FileService;
 import pros.ElectronicStore.services.UserService;
 
-import java.io.FileNotFoundException;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 
 @RestController
 @RequestMapping("/users")
+@Tag(name = "Users-Controller",description = "endpoints related to users are managed here")
 public class UserController {
 
     @Autowired
@@ -52,6 +55,7 @@ public class UserController {
      */
 
     @PostMapping
+    @Operation(summary = "create user",description = "Used to create a new User")
     public ResponseEntity<UserDto> create(@Valid  @RequestBody UserDto userDto){
         userDto.setProviders(Providers.SELF);
         UserDto userDto1 = userService.createUser(userDto);
@@ -71,6 +75,7 @@ public class UserController {
      * @return a ResponseEntity containing the updated UserDto and HTTP status 200 (OK)
      */
     @PutMapping("/{user_id}")
+    @Operation(summary = "update -user",description = "Used to update users information")
     public  ResponseEntity<UserDto> update(@PathVariable("user_id") String user_id,@Valid @RequestBody UserDto userDto){
         UserDto updatedUser = userService.updateUser(userDto, user_id);
         return new ResponseEntity<>(updatedUser,HttpStatus.OK);
@@ -89,6 +94,7 @@ public class UserController {
 
 
     @DeleteMapping("/{user_id}")
+    @Operation(summary = "delete-user",description = "Used to delete the user")
     public ResponseEntity<ApiResponseMessage> delete(@PathVariable ("user_id") String user_id){
         userService.deleteUser(user_id);
         ApiResponseMessage message = ApiResponseMessage.builder().message("User Deleted Successfully !!")
@@ -107,10 +113,11 @@ public class UserController {
      */
 
     @GetMapping()
+    @Operation(summary = "getAllUser",description = "Used to fetch all the user from store ")
     public ResponseEntity<PageableResponse<UserDto>> getAllUsers(
             @RequestParam(value = "pageNumber",defaultValue = "0",required = false)int pageNumber,
             @RequestParam(value = "pageSize",defaultValue = "10",required = false) int pageSize,
-            @RequestParam(value = "sortBy",defaultValue = "Gender",required = false) String sortBy,
+            @RequestParam(value = "sortBy",defaultValue = "name",required = false) String sortBy,
             @RequestParam(value = "sortDirection",defaultValue = "asc",required = false) String sortDirection
 
     ){
@@ -128,6 +135,7 @@ public class UserController {
      */
 
     @GetMapping("/{user_id}")
+    @Operation(summary = "get-user",description = "Retrieves user")
     public  ResponseEntity<UserDto> getUser(@PathVariable ("user_id") String user_id ){
         return  new ResponseEntity<>(userService.getUserById(user_id),HttpStatus.OK);
     }
@@ -143,6 +151,7 @@ public class UserController {
      */
 
     @GetMapping("/email/{user_email}")
+    @Operation(summary = "get-user-by-email",description = "Retrieves user ")
     public  ResponseEntity<UserDto> getUserByEmail(@PathVariable("user_email") String user_email){
         return new ResponseEntity<>(userService.getUserByEmail(user_email),HttpStatus.OK);
     }
